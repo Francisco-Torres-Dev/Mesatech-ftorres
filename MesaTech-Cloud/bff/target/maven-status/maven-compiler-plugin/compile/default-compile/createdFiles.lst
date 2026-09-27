@@ -1,0 +1,8 @@
+com\mesatech\cloud\bff\dto\AuthUserDto.class
+com\mesatech\cloud\bff\service\LocalAuthService.class
+com\mesatech\cloud\bff\config\SecurityConfig.class
+com\mesatech\cloud\bff\config\CorsConfig.class
+com\mesatech\cloud\bff\BffApplication.class
+com\mesatech\cloud\bff\controller\AuthController.class
+com\mesatech\cloud\bff\controller\SolicitudProxyController.class
+com\mesatech\cloud\bff\dto\AuthLoginRequest.class

@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mesatech
+    username: mesatech
+    password: mesatech
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+
+logging:
+  level:
+    org.hibernate.SQL: INFO
+    org.springframework: INFO

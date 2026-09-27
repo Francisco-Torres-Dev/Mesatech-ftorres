@@ -1,0 +1,11 @@
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\CatalogoApplication.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\controller\CatalogoController.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\dto\CategoriaDto.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\dto\PrioridadDto.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\entity\Categoria.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\entity\Prioridad.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\exception\ApiException.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\exception\GlobalExceptionHandler.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\repository\CategoriaRepository.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\repository\PrioridadRepository.java
+C:\Users\fdavi\OneDrive\Escritorio\proyectos y trabajos para clientes\Mesatech\MesaTech-Cloud\ms-catalogo\src\main\java\com\mesatech\cloud\catalogo\service\CatalogoService.java

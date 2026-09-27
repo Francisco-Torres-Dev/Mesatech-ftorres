@@ -1,0 +1,14 @@
+mesatech:
+  api:
+    solicitudes-url: ${SOLICITUDES_SERVICE_URL}
+    catalogo-url: ${CATALOGO_SERVICE_URL}
+    local-auth:
+      enabled: false
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ENTRA_ISSUER:}
+          jwk-set-uri: ${ENTRA_JWKS_URI:}

@@ -1,0 +1,11 @@
+com\mesatech\cloud\catalogo\CatalogoApplication.class
+com\mesatech\cloud\catalogo\exception\ApiException.class
+com\mesatech\cloud\catalogo\entity\Prioridad.class
+com\mesatech\cloud\catalogo\dto\PrioridadDto.class
+com\mesatech\cloud\catalogo\dto\CategoriaDto.class
+com\mesatech\cloud\catalogo\controller\CatalogoController.class
+com\mesatech\cloud\catalogo\service\CatalogoService.class
+com\mesatech\cloud\catalogo\exception\GlobalExceptionHandler.class
+com\mesatech\cloud\catalogo\repository\PrioridadRepository.class
+com\mesatech\cloud\catalogo\repository\CategoriaRepository.class
+com\mesatech\cloud\catalogo\entity\Categoria.class
