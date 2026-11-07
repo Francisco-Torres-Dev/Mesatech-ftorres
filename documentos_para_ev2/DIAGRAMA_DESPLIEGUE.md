@@ -1,4 +1,4 @@
-# Diagrama de Despliegue y Arquitectura Real de MesaTech Cloud (EP2)
+﻿# Diagrama de Despliegue y Arquitectura Real de MesaTech Cloud (EP2)
 **Integrantes:** Francisco Torres — Kevin Mesías  
 **Asignatura:** Desarrollo Cloud Native I (DSY1107) — Evaluación Parcial 2
 
@@ -16,16 +16,16 @@ flowchart TD
 
     subgraph AWS_VPC["Amazon VPC (us-east-1) - Red 172.31.0.0/16"]
         subgraph EC2_A["EC2 A: MesaTech-EC2-A-Catalogo-BFF (i-05a7867f9d3c7ebaf)"]
-            BFF["MesaTech BFF\nSpring Boot (Puerto 8080)\nIP Privada: 172.31.5.17\nIP Pública: 13.222.100.46"]
+            BFF["MesaTech BFF\nSpring Boot (Puerto 8080)\nIP Privada: 172.31.5.17\nIP Pública: 18.233.216.8"]
             CAT["ms-catalogo\nSpring Boot (Puerto 8081)\n[ROL: PUBLICADOR DE EVENTOS]"]
         end
 
         subgraph EC2_B["EC2 B: MesaTech-EC2-B-Solicitudes (i-0264b18bc3f0955a3)"]
-            SOL["ms-solicitudes\nSpring Boot (Puerto 8082)\nIP Privada: 172.31.4.52\nIP Pública: 13.223.90.82\n[ROL: CONSUMIDOR DE EVENTOS]"]
+            SOL["ms-solicitudes\nSpring Boot (Puerto 8082)\nIP Privada: 172.31.4.52\nIP Pública: 98.82.97.78\n[ROL: CONSUMIDOR DE EVENTOS]"]
         end
 
         subgraph EC2_C["EC2 C: MesaTech-EC2-C-RabbitMQ (i-0073a1baff203a9b4)"]
-            BROKER["RabbitMQ 3.13-management (Docker)\nIP Privada: 172.31.13.15\nIP Pública: 3.226.237.1\nPuertos: 5672 (AMQP), 15672 (Web UI)\nVhost: 'mesatech'"]
+            BROKER["RabbitMQ 3.13-management (Docker)\nIP Privada: 172.31.13.15\nIP Pública: 34.236.12.11\nPuertos: 5672 (AMQP), 15672 (Web UI)\nVhost: 'mesatech'"]
             EXCHANGE["Exchange Direct (Durable)\n'catalogo.exchange'"]
             QUEUE["Queue (Durable)\n'solicitudes.catalogo.queue'"]
             BINDING["Binding: routing_key='categoria.creada'"]
