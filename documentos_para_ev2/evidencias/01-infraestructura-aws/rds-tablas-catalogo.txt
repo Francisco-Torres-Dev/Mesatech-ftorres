@@ -1,0 +1,20 @@
+CREATE TABLE
+CREATE TABLE
+INSERT 0 4
+INSERT 0 3
+=== TABLAS EN RDS CATALOGO ===
+            List of relations
+ Schema |    Name     | Type  |  Owner   
+--------+-------------+-------+----------
+ public | categorias  | table | mesatech
+ public | prioridades | table | mesatech
+(2 rows)
+
+=== REGISTROS CATEGORIAS (CATALOGO) ===
+ id |  nombre  | activo 
+----+----------+--------
+  1 | Hardware | t
+  2 | Software | t
+  3 | Redes    | t
+(3 rows)
+

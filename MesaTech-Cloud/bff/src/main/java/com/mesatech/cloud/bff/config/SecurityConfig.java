@@ -65,10 +65,11 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "https://task-interstate-topic-optimal.trycloudflare.com"
-        ));
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://task-interstate-topic-optimal.trycloudflare.com",
+    "https://members-introductory-programmer-see.trycloudflare.com"
+));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -94,3 +95,4 @@ public class SecurityConfig {
         return http.build();
     }
 }
+

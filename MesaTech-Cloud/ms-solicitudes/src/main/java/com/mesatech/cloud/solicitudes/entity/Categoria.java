@@ -11,8 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Categoria {
+    // El identificador se recibe y sincroniza desde el microservicio de Catálogo
+    // Se elimina @GeneratedValue para preservar la referencia de origen (Requisito EP2)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -23,4 +24,11 @@ public class Categoria {
 
     @Column(nullable = false)
     private boolean activo = true;
+
+    public Categoria(Long id, String nombre, String descripcion, boolean activo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.activo = activo;
+    }
 }

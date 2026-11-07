@@ -1,0 +1,103 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P2: FLUJO COMPLETO EXTREMO A EXTREMO
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. CREACIÓN DE CATEGORÍA EN CATÁLOGO (PUBLICADOR - EC2 A):
+--------------------------------------------------------------------------------
+Comando HTTP ejecutado:
+POST /v1/catalogo/categorias
+Payload enviado:
+{
+  "nombre": "Ciberseguridad",
+  "descripcion": "Gestion de incidentes y firewall",
+  "activo": true
+}
+
+Respuesta recibida:
+HTTP 200 OK
+{
+  "id": 4,
+  "nombre": "Ciberseguridad",
+  "descripcion": "Gestion de incidentes y firewall",
+  "activo": true
+}
+
+2. CONSULTA EN RDS CATÁLOGO (INSTANCIA EXCLUSIVA PUBLICADOR):
+--------------------------------------------------------------------------------
+Endpoint: mesatech-rds-catalogo.cqshchood3yx.us-east-1.rds.amazonaws.com
+Query: SELECT id, nombre, descripcion FROM categorias WHERE nombre = 'Ciberseguridad';
+Resultado:
+ id |     nombre     |           descripcion            
+----+----------------+----------------------------------
+  4 | Ciberseguridad | Gestion de incidentes y firewall
+(1 row)
+
+3. EVENTO PUBLICADO A RABBITMQ (BROKER EC2 C):
+--------------------------------------------------------------------------------
+Broker: 172.31.13.15:5672 | VHost: mesatech
+Exchange: catalogo.exchange (direct, durable)
+Routing Key: categoria.creada
+Log de confirmación en ms-catalogo:
+[PUBLICADOR] Publicando evento CategoriaCreada -> eventId: 2e29c2b0-e117-42a0-9157-cf052c29bd12, categoriaId: 4, nombre: Ciberseguridad
+[CONFIRM] Mensaje confirmado por el broker RabbitMQ. Correlacion: 2e29c2b0-e117-42a0-9157-cf052c29bd12
+[PUBLICADOR OK] Broker confirmo recepcion del evento: 2e29c2b0-e117-42a0-9157-cf052c29bd12
+
+4. CONSUMO ASÍNCRONO EN SOLICITUDES (CONSUMIDOR - EC2 B):
+--------------------------------------------------------------------------------
+Cola escuchada: solicitudes.catalogo.queue (durable)
+Log del consumidor en ms-solicitudes:
+2026-10-30T10:29:48.347Z INFO [CONSUMIDOR] Mensaje recibido desde RabbitMQ -> eventId: 2e29c2b0-e117-42a0-9157-cf052c29bd12, tipo: CATEGORIA_CREADA, categoriaId: 4, nombre: Ciberseguridad
+2026-10-30T10:29:48.463Z INFO [CONSUMIDOR OK] Categoría persistida exitosamente en RDS Solicitudes con ID origen: 4
+
+5. CONSULTA EN RDS SOLICITUDES (INSTANCIA EXCLUSIVA CONSUMIDOR):
+--------------------------------------------------------------------------------
+Endpoint: mesatech-rds-solicitudes.cqshchood3yx.us-east-1.rds.amazonaws.com
+Query: SELECT id, nombre, descripcion FROM categorias WHERE nombre = 'Ciberseguridad';
+Resultado:
+ id |     nombre     |                 descripcion                  
+----+----------------+----------------------------------------------
+  4 | Ciberseguridad | Sincronizada vía RabbitMQ (CATEGORIA_CREADA)
+(1 row)
+
+6. CREACIÓN DE SOLICITUD UTILIZANDO LA CATEGORÍA RECIBIDA (EC2 B):
+--------------------------------------------------------------------------------
+Comando HTTP ejecutado:
+POST /v1/solicitudes
+Payload enviado:
+{
+  "titulo": "Bloqueo por sospecha de malware",
+  "descripcion": "Se detectaron conexiones anomalas y se requiere analisis forense",
+  "categoriaId": 4,
+  "prioridadId": 3,
+  "usuarioEmail": "cliente@mesatech.local"
+}
+
+Respuesta recibida:
+HTTP 200 OK
+{
+  "id": 2,
+  "titulo": "Bloqueo por sospecha de malware",
+  "descripcion": "Se detectaron conexiones anomalas y se requiere analisis forense",
+  "categoriaId": 4,
+  "categoriaNombre": "Ciberseguridad",
+  "prioridadId": 3,
+  "prioridadNombre": "ALTA",
+  "usuarioSolicitante": "Cliente Demo",
+  "usuarioSolicitanteEmail": "cliente@mesatech.local",
+  "estado": "CREADA",
+  "fechaCreacion": "2026-10-30T10:30:37.047274949"
+}
+
+Query en RDS Solicitudes:
+SELECT id, titulo, estado, categoria_id, usuario_solicitante_id FROM solicitudes WHERE categoria_id = 4;
+Resultado:
+ id |             titulo              | estado | categoria_id |        usuario_solicitante_id        
+----+---------------------------------+--------+--------------+--------------------------------------
+  2 | Bloqueo por sospecha de malware | CREADA |            4 | 11111111-1111-1111-1111-111111111111
+(1 row)
+
+CONCLUSIÓN P2:
+El flujo asíncrono se completó con éxito: Catálogo persistió en su RDS, publicó el evento, RabbitMQ enrutó el mensaje persistente, Solicitudes consumió el mensaje, persistió la copia en su RDS manteniendo el categoriaId original (4), y finalmente se creó una solicitud de soporte utilizando dicha categoría.
+================================================================================

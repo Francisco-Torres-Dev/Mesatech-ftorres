@@ -1,0 +1,47 @@
+================================================================================
+INSTRUCCIONES PARA EJECUTAR MESATECH FRONTEND EN OTRO COMPUTADOR
+================================================================================
+
+Este paquete contiene ÚNICAMENTE el frontend React de MesaTech Cloud, ya que
+toda la infraestructura (BFF, Catálogo, Solicitudes, RabbitMQ, RDS y API Gateway)
+se encuentra desplegada y funcionando en la nube de AWS.
+
+--------------------------------------------------------------------------------
+REQUISITOS PREVIOS EN EL OTRO COMPUTADOR:
+--------------------------------------------------------------------------------
+1. Tener instalado Node.js (versión 18, 20 o superior).
+   Descargar desde: https://nodejs.org/
+
+2. Las instancias en AWS deben estar ENCENDIDAS (Running) en AWS Academy:
+   - MesaTech-EC2-A-Catalogo-BFF
+   - MesaTech-EC2-B-Solicitudes
+   - MesaTech-EC2-C-RabbitMQ
+
+--------------------------------------------------------------------------------
+PASOS PARA EJECUTAR:
+--------------------------------------------------------------------------------
+1. Descomprime este archivo ZIP en cualquier carpeta de tu computador.
+
+2. Abre una terminal (PowerShell, CMD o Terminal) en esa carpeta descomprimida.
+
+3. Instala las dependencias necesarias ejecutando:
+   npm install
+
+4. Inicia la aplicación en modo desarrollo:
+   npm run dev
+
+5. Abre tu navegador web en la dirección que te indique la consola:
+   http://localhost:5173
+
+--------------------------------------------------------------------------------
+CONFIGURACIÓN CONECTADA A AWS (YA INCLUIDA EN .env):
+--------------------------------------------------------------------------------
+• AWS API Gateway: https://13fetz3wok.execute-api.us-east-1.amazonaws.com
+• Microsoft Entra ID (Tenant ID): 2b28c657-3169-48ee-91b9-d36cede4fe70
+• Client ID: 964cf08d-0742-47e1-bdf7-1b912dc8b506
+• Scope: api://964cf08d-0742-47e1-bdf7-1b912dc8b506/access_as_user
+• Redirect URI: http://localhost:5173
+
+¡Listo! Al presionar "Iniciar sesión con Microsoft", se autenticará con Entra ID
+y consumirá directamente tu backend y microservicios en AWS.
+================================================================================

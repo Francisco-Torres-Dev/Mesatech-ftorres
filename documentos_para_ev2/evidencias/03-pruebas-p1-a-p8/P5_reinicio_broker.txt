@@ -1,0 +1,75 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P5: REINICIO DEL BROKER Y CONSERVACIÓN DE VOLUMEN
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. CONDICIONES PREVIAS:
+--------------------------------------------------------------------------------
+- Consumidor (ms-solicitudes en EC2 B) detenido: sudo systemctl stop mesatech-solicitudes.
+- Publicación de nueva categoría en Catálogo (EC2 A):
+  POST /v1/catalogo/categorias
+  Payload: {"nombre":"DevOps y CI/CD","descripcion":"Automatizacion de despliegues y pipelines","activo":true}
+  Respuesta: HTTP 200 OK -> ID: 6
+
+2. ESTADO DE LA COLA ANTES DEL REINICIO DEL BROKER:
+--------------------------------------------------------------------------------
+Comando: rabbitmqctl list_queues -p mesatech name messages messages_ready
+Resultado:
+name                        messages  messages_ready
+solicitudes.catalogo.queue  1         1
+
+3. DESTRUCCIÓN Y RECREACIÓN DEL CONTENEDOR RABBITMQ (EC2 C):
+--------------------------------------------------------------------------------
+Comando ejecutado en EC2 C:
+cd ~/rabbitmq
+docker compose down
+docker compose up -d
+
+Salida de Docker Compose:
+Container mesatech-rabbitmq Stopping
+Container mesatech-rabbitmq Stopped
+Container mesatech-rabbitmq Removing
+Container mesatech-rabbitmq Removed
+Network rabbitmq_default Removing
+Network rabbitmq_default Removed
+Network rabbitmq_default Creating
+Network rabbitmq_default Created
+Container mesatech-rabbitmq Creating
+Container mesatech-rabbitmq Created
+Container mesatech-rabbitmq Starting
+Container mesatech-rabbitmq Started
+
+Nota técnica: El volumen nombrado 'mesatech_rabbitmq_data' NO fue eliminado, preservando /var/lib/rabbitmq intacto.
+
+4. COMPROBACIÓN DE RECURSOS PERSISTENTES TRAS RECREAR CONTENEDOR:
+--------------------------------------------------------------------------------
+• Virtual host:
+  rabbitmqctl list_vhosts -> 'mesatech' (conservado)
+• Exchange:
+  rabbitmqctl list_exchanges -p mesatech -> 'catalogo.exchange' (direct, durable true - conservado)
+• Cola y mensaje:
+  rabbitmqctl list_queues -p mesatech name durable messages messages_ready
+  Resultado:
+  name                        durable  messages  messages_ready
+  solicitudes.catalogo.queue  true     1         1
+
+5. INICIO DEL CONSUMIDOR Y ESCRITURA EN RDS SOLICITUDES:
+--------------------------------------------------------------------------------
+Comando en EC2 B:
+sudo systemctl start mesatech-solicitudes
+
+Consulta en RDS Solicitudes:
+Query: SELECT id, nombre, descripcion FROM categorias WHERE id = 6;
+Resultado:
+ id |     nombre     |                 descripcion                  
+----+----------------+----------------------------------------------
+  6 | DevOps y CI/CD | Sincronizada vía RabbitMQ (CATEGORIA_CREADA)
+(1 row)
+
+Estado final de la cola:
+solicitudes.catalogo.queue: messages 0, messages_ready 0, messages_unacknowledged 0
+
+CONCLUSIÓN P5:
+Se demostró que la configuración del compose.yaml con volumen persistente nombrado 'mesatech_rabbitmq_data', junto con la declaración durable del vhost, exchange, cola y entrega persistente de mensajes, resiste completamente la eliminación y recreación del contenedor del broker. El mensaje no se perdió y fue consumido y persistido correctamente tras restablecer el consumidor.
+================================================================================

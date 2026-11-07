@@ -1,0 +1,33 @@
+CREATE EXTENSION
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 3
+INSERT 0 4
+INSERT 0 3
+INSERT 0 1
+=== TABLAS EN RDS SOLICITUDES ===
+            List of relations
+ Schema |    Name     | Type  |  Owner   
+--------+-------------+-------+----------
+ public | categorias  | table | mesatech
+ public | prioridades | table | mesatech
+ public | solicitudes | table | mesatech
+ public | usuarios    | table | mesatech
+(4 rows)
+
+=== REGISTROS CATEGORIAS COPIA (SOLICITUDES) ===
+ id |  nombre  | activo 
+----+----------+--------
+  1 | Hardware | t
+  2 | Software | t
+  3 | Redes    | t
+(3 rows)
+
+=== REGISTROS SOLICITUDES ===
+ id |       titulo       | estado | categoria_id 
+----+--------------------+--------+--------------
+  1 | No enciende equipo | CREADA |            1
+(1 row)
+

@@ -9,7 +9,9 @@ export const api = axios.create({
 
 api.interceptors.request.use(async (config) => {
   if (AUTH_MODE === 'entra') {
-    config.headers.Authorization = `Bearer ${await getAccessToken()}`;
+    const token = await getAccessToken();
+    console.log('[API Request]', config.method?.toUpperCase(), config.url, 'Token length:', token?.length);
+    config.headers.Authorization = `Bearer ${token}`;
     return config;
   }
 
@@ -22,8 +24,12 @@ api.interceptors.request.use(async (config) => {
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('[API Response]', response.status, response.config.url);
+    return response;
+  },
   (error) => {
+    console.error('[API Error]', error?.response?.status, error?.response?.data, error?.config?.url);
     const message = error?.response?.data?.message || 'Error en la solicitud';
     const status = error?.response?.status;
 

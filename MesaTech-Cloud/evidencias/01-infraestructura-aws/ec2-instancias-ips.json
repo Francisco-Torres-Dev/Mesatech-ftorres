@@ -1,0 +1,26 @@
+[
+  {
+    "name": "MesaTech-EC2-B-Solicitudes",
+    "instanceId": "i-0264b18bc3f0955a3",
+    "state": "running",
+    "privateIp": "172.31.4.52",
+    "publicIp": "52.3.230.166",
+    "publicDns": "ec2-52-3-230-166.compute-1.amazonaws.com"
+  },
+  {
+    "name": "MesaTech-EC2-A-Catalogo-BFF",
+    "instanceId": "i-05a7867f9d3c7ebaf",
+    "state": "running",
+    "privateIp": "172.31.5.17",
+    "publicIp": "3.239.211.61",
+    "publicDns": "ec2-3-239-211-61.compute-1.amazonaws.com"
+  },
+  {
+    "name": "MesaTech-EC2-C-RabbitMQ",
+    "instanceId": "i-0073a1baff203a9b4",
+    "state": "running",
+    "privateIp": "172.31.13.15",
+    "publicIp": "100.53.54.131",
+    "publicDns": "ec2-100-53-54-131.compute-1.amazonaws.com"
+  }
+]

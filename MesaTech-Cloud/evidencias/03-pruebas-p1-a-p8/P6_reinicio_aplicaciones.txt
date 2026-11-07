@@ -1,0 +1,55 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P6: REINICIO DE APLICACIONES Y PERSISTENCIA EN RDS
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. REINICIO DE AMBOS MICROSERVICIOS SPRING BOOT:
+--------------------------------------------------------------------------------
+Comando en EC2 A (Catálogo): sudo systemctl restart mesatech-catalogo
+Comando en EC2 B (Solicitudes): sudo systemctl restart mesatech-solicitudes
+
+2. CONSULTA EN RDS CATÁLOGO TRAS REINICIO:
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre, activo FROM categorias ORDER BY id;
+Resultado:
+ id |     nombre     | activo 
+----+----------------+--------
+  1 | Hardware       | t
+  2 | Software       | t
+  3 | Redes          | t
+  4 | Ciberseguridad | t
+  5 | Cloud AWS      | t
+  6 | DevOps y CI/CD | t
+(6 rows)
+
+3. CONSULTA EN RDS SOLICITUDES TRAS REINICIO:
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre, activo FROM categorias ORDER BY id;
+Resultado:
+ id |     nombre     | activo 
+----+----------------+--------
+  1 | Hardware       | t
+  2 | Software       | t
+  3 | Redes          | t
+  4 | Ciberseguridad | t
+  5 | Cloud AWS      | t
+  6 | DevOps y CI/CD | t
+(6 rows)
+
+Query: SELECT id, titulo, estado, categoria_id FROM solicitudes ORDER BY id;
+Resultado:
+ id |             titulo              | estado | categoria_id 
+----+---------------------------------+--------+--------------
+  1 | No enciende equipo              | CREADA |            1
+  2 | Bloqueo por sospecha de malware | CREADA |            4
+(2 rows)
+
+4. CONSULTA A TRAVÉS DE LOS ENDPOINTS HTTP TRAS REINICIO:
+--------------------------------------------------------------------------------
+GET http://localhost:8081/v1/catalogo/categorias -> Retorna lista completa de 6 categorías.
+GET http://localhost:8082/v1/solicitudes -> Retorna las 2 solicitudes registradas.
+
+CONCLUSIÓN P6:
+El reinicio de los microservicios en ambas instancias EC2 no provocó ninguna pérdida de datos ni corrupción en las bases de datos. Los endpoints y las conexiones de pool (HikariCP) se restablecieron con éxito conectándose de manera independiente a sus correspondientes instancias Amazon RDS.
+================================================================================

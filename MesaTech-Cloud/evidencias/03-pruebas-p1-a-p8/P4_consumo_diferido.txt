@@ -1,0 +1,41 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P4: CONSUMO DIFERIDO TRAS INICIO DE CONSUMIDOR
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. ARRANQUE DEL SERVICIO CONSUMIDOR (EC2 B):
+--------------------------------------------------------------------------------
+Comando ejecutado:
+sudo systemctl start mesatech-solicitudes
+Estado verificado:
+active (running)
+
+2. TRAZA Y LOGS DEL PROCESAMIENTO ASÍNCRONO DEL MENSAJE RETENIDO:
+--------------------------------------------------------------------------------
+Log registrado en ms-solicitudes (/home/ubuntu/ms-solicitudes.log):
+2026-10-30T10:32:09.899Z INFO [main] o.s.a.r.c.CachingConnectionFactory : Created new connection: delegate=amqp://consumidor_solicitudes@172.31.13.15:5672/mesatech
+2026-10-30T10:32:10.093Z INFO [ntContainer#0-1] c.m.c.s.consumer.RabbitConsumer : [CONSUMIDOR] Mensaje recibido desde RabbitMQ -> eventId: 3f087b91-7786-41cd-9c37-e5286c6a798c, tipo: CATEGORIA_CREADA, categoriaId: 5, nombre: Cloud AWS
+2026-10-30T10:32:10.197Z INFO [ntContainer#0-1] c.m.c.s.consumer.RabbitConsumer : [CONSUMIDOR OK] Categoría persistida exitosamente en RDS Solicitudes con ID origen: 5
+
+3. ESTADO FINAL DE LA COLA EN RABBITMQ TRAS EL ACUSE (ACK):
+--------------------------------------------------------------------------------
+Comando ejecutado en el broker (EC2 C):
+rabbitmqctl list_queues -p mesatech name messages messages_ready messages_unacknowledged
+Resultado:
+name                        messages  messages_ready  messages_unacknowledged
+solicitudes.catalogo.queue  0         0               0
+
+4. VERIFICACIÓN DE PERSISTENCIA EN RDS SOLICITUDES:
+--------------------------------------------------------------------------------
+Endpoint: mesatech-rds-solicitudes.cqshchood3yx.us-east-1.rds.amazonaws.com
+Query: SELECT id, nombre, descripcion FROM categorias WHERE id = 5;
+Resultado:
+ id |  nombre   |                 descripcion                  
+----+-----------+----------------------------------------------
+  5 | Cloud AWS | Sincronizada vía RabbitMQ (CATEGORIA_CREADA)
+(1 row)
+
+CONCLUSIÓN P4:
+Al iniciar el servicio consumidor, este se reconectó automáticamente a RabbitMQ, consumió el mensaje que permanecía en cola, lo deserializó, persistió la categoría en el RDS exclusivo de Solicitudes conservando el ID 5, y envió el acuse (ACK) correspondiente, dejando la cola en 0 mensajes Ready y 0 mensajes Unacked. La persistencia en la base de datos receptora quedó plenamente demostrada.
+================================================================================

@@ -1,7 +1,7 @@
 mesatech:
   api:
-    solicitudes-url: ${SOLICITUDES_SERVICE_URL}
-    catalogo-url: ${CATALOGO_SERVICE_URL}
+    solicitudes-url: ${SOLICITUDES_SERVICE_URL:http://172.31.4.52:8082}
+    catalogo-url: ${CATALOGO_SERVICE_URL:http://localhost:8081}
     local-auth:
       enabled: false
 
@@ -10,5 +10,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ENTRA_ISSUER:}
-          jwk-set-uri: ${ENTRA_JWKS_URI:}
+          issuer-uri: ${ENTRA_ISSUER:https://login.microsoftonline.com/2b28c657-3169-48ee-91b9-d36cede4fe70/v2.0}
+          jwk-set-uri: ${ENTRA_JWKS_URI:https://login.microsoftonline.com/2b28c657-3169-48ee-91b9-d36cede4fe70/discovery/v2.0/keys}
+
+server:
+  port: 8080

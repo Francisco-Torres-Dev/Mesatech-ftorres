@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-10-30T10:12:43.271Z",
+  "region": "us-east-1",
+  "engine": "PostgreSQL 16",
+  "port": 5432,
+  "dbInstances": [
+    {
+      "component": "RDS Catálogo (Exclusivo)",
+      "identifier": "mesatech-rds-catalogo",
+      "dbName": "mesatech_catalogo",
+      "securityGroup": "sg-05c509b1d00eaf639",
+      "status": "creating"
+    },
+    {
+      "component": "RDS Solicitudes (Exclusivo)",
+      "identifier": "mesatech-rds-solicitudes",
+      "dbName": "mesatech_solicitudes",
+      "securityGroup": "sg-00f4ba0465ecaf653",
+      "status": "creating"
+    }
+  ]
+}

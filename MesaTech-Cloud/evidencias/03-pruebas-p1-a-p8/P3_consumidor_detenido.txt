@@ -1,0 +1,61 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P3: CONSUMIDOR DETENIDO Y MENSAJE READY EN COLA
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. DETENCIÓN DEL SERVICIO CONSUMIDOR (EC2 B):
+--------------------------------------------------------------------------------
+Comando ejecutado en EC2 B:
+sudo systemctl stop mesatech-solicitudes
+Estado del servicio:
+inactive (dead)
+
+2. CREACIÓN DE NUEVA CATEGORÍA EN CATÁLOGO (EC2 A):
+--------------------------------------------------------------------------------
+Comando HTTP ejecutado:
+POST /v1/catalogo/categorias
+Payload enviado:
+{
+  "nombre": "Cloud AWS",
+  "descripcion": "Arquitectura y servicios en la nube",
+  "activo": true
+}
+
+Respuesta recibida:
+HTTP 200 OK
+{
+  "id": 5,
+  "nombre": "Cloud AWS",
+  "descripcion": "Arquitectura y servicios en la nube",
+  "activo": true
+}
+
+3. VERIFICACIÓN EN RDS CATÁLOGO (PERSISTENCIA INMEDIATA DEL PUBLICADOR):
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre, descripcion FROM categorias WHERE nombre = 'Cloud AWS';
+Resultado:
+ id |  nombre   |             descripcion             
+----+-----------+-------------------------------------
+  5 | Cloud AWS | Arquitectura y servicios en la nube
+(1 row)
+
+4. VERIFICACIÓN DE MENSAJE EN COLA DE RABBITMQ (EC2 C):
+--------------------------------------------------------------------------------
+Comando ejecutado en el contenedor:
+rabbitmqctl list_queues -p mesatech name messages messages_ready messages_unacknowledged
+Resultado:
+name                        messages  messages_ready  messages_unacknowledged
+solicitudes.catalogo.queue  1         1               0
+
+5. VERIFICACIÓN EN RDS SOLICITUDES (NO EXISTE EN COPIA LOCAL):
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre FROM categorias WHERE nombre = 'Cloud AWS';
+Resultado:
+ id | nombre 
+----+--------
+(0 rows)
+
+CONCLUSIÓN P3:
+Con el microservicio consumidor detenido, la categoría fue persistida exitosamente en el RDS propio de Catálogo y el mensaje permanece retenido y persistente en estado "Ready" (1) dentro de la cola RabbitMQ, confirmando que no existe acoplamiento temporal ni se ha sincronizado aún en el RDS de Solicitudes.
+================================================================================

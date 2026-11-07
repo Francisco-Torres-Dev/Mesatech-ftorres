@@ -1,0 +1,11 @@
+EVIDENCIA DE RED AWS (VPC Y SUBNETS)
+Fecha: 2026-10-30T10:12:29.446Z
+VPC ID: vpc-0844042a1adef41c8
+CIDR: 172.31.0.0/16
+Subnets:
+- subnet-0e3d3789d460a1614 | AZ: us-east-1a | CIDR: 172.31.0.0/20
+- subnet-06efabb2292e0ecb5 | AZ: us-east-1e | CIDR: 172.31.48.0/20
+- subnet-0e02b3bdae9a21f13 | AZ: us-east-1d | CIDR: 172.31.32.0/20
+- subnet-06d46d77eee9f29bb | AZ: us-east-1f | CIDR: 172.31.64.0/20
+- subnet-019cc1df2f019afee | AZ: us-east-1c | CIDR: 172.31.16.0/20
+- subnet-04cedf2d695676b04 | AZ: us-east-1b | CIDR: 172.31.80.0/20

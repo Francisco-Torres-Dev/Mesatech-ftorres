@@ -1,0 +1,52 @@
+{
+  "apiId": "13fetz3wok",
+  "apiEndpoint": "https://13fetz3wok.execute-api.us-east-1.amazonaws.com",
+  "protocol": "HTTP",
+  "cors": {
+    "origins": [
+      "*"
+    ],
+    "methods": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+      "OPTIONS"
+    ],
+    "headers": [
+      "Authorization",
+      "Content-Type",
+      "Accept",
+      "Origin"
+    ]
+  },
+  "authorizer": {
+    "authorizerId": "7kexv9",
+    "name": "MesaTech-EntraID-Authorizer",
+    "type": "JWT",
+    "issuer": "https://login.microsoftonline.com/2b28c657-3169-48ee-91b9-d36cede4fe70/v2.0",
+    "audience": [
+      "964cf08d-0742-47e1-bdf7-1b912dc8b506",
+      "api://964cf08d-0742-47e1-bdf7-1b912dc8b506"
+    ]
+  },
+  "integration": {
+    "target": "http://3.239.211.61:8080/{proxy}",
+    "type": "HTTP_PROXY"
+  },
+  "routes": [
+    {
+      "route": "ANY /v1/{proxy+}",
+      "authorizer": "MesaTech-EntraID-Authorizer"
+    },
+    {
+      "route": "ANY /v2/{proxy+}",
+      "authorizer": "MesaTech-EntraID-Authorizer"
+    },
+    {
+      "route": "OPTIONS /{proxy+}",
+      "authorizer": "None (CORS Preflight)"
+    }
+  ]
+}

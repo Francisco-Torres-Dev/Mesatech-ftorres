@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-10-30T10:12:43.267Z",
+  "region": "us-east-1",
+  "instances": [
+    {
+      "component": "Catálogo y BFF (Publicador)",
+      "name": "MesaTech-EC2-A-Catalogo-BFF",
+      "instanceId": "i-05a7867f9d3c7ebaf",
+      "instanceType": "t3.small",
+      "ami": "ami-0d6dd9e8265d48906",
+      "securityGroup": "sg-03d8ffcf9973089f0"
+    },
+    {
+      "component": "Solicitudes (Consumidor)",
+      "name": "MesaTech-EC2-B-Solicitudes",
+      "instanceId": "i-0264b18bc3f0955a3",
+      "instanceType": "t3.micro",
+      "ami": "ami-0d6dd9e8265d48906",
+      "securityGroup": "sg-07fbba9ca5edd0afb"
+    },
+    {
+      "component": "RabbitMQ Broker (Docker Compose)",
+      "name": "MesaTech-EC2-C-RabbitMQ",
+      "instanceId": "i-0073a1baff203a9b4",
+      "instanceType": "t3.micro",
+      "ami": "ami-0d6dd9e8265d48906",
+      "securityGroup": "sg-0b13179b859054389"
+    }
+  ]
+}

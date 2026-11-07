@@ -1,0 +1,27 @@
+Setting tags for user "admin_mesatech" to [administrator] ...
+Setting permissions for user "admin_mesatech" in vhost "mesatech" ...
+Setting permissions for user "admin_mesatech" in vhost "/" ...
+exchange declared
+queue declared
+binding declared
+=== VERIFICACION EXCHANGES ===
+Listing exchanges for vhost mesatech ...
+name	type	durable
+amq.rabbitmq.trace	topic	true
+amq.fanout	fanout	true
+amq.topic	topic	true
+amq.direct	direct	true
+amq.match	headers	true
+catalogo.exchange	direct	true
+	direct	true
+amq.headers	headers	true
+=== VERIFICACION COLAS ===
+Timeout: 60.0 seconds ...
+Listing queues for vhost mesatech ...
+name	durable	auto_delete	messages
+solicitudes.catalogo.queue	true	false	0
+=== VERIFICACION BINDINGS ===
+Listing bindings for vhost mesatech...
+source_name	source_kind	destination_name	destination_kind	routing_key	arguments
+	exchange	solicitudes.catalogo.queue	queue	solicitudes.catalogo.queue	[]
+catalogo.exchange	exchange	solicitudes.catalogo.queue	queue	categoria.creada	[]

@@ -1,0 +1,25 @@
+{
+  "vpcId": "vpc-0844042a1adef41c8",
+  "securityGroups": {
+    "mesatech-sg-rabbitmq": {
+      "id": "sg-0b13179b859054389",
+      "purpose": "EC2 RabbitMQ (Puertos 22, 5672 AMQP, 15672 Management)"
+    },
+    "mesatech-sg-catalogo": {
+      "id": "sg-03d8ffcf9973089f0",
+      "purpose": "EC2 Catálogo y BFF (Puertos 22, 8080 BFF, 8081 Catálogo)"
+    },
+    "mesatech-sg-solicitudes": {
+      "id": "sg-07fbba9ca5edd0afb",
+      "purpose": "EC2 Solicitudes (Puertos 22, 8082 Solicitudes)"
+    },
+    "mesatech-sg-rds-catalogo": {
+      "id": "sg-05c509b1d00eaf639",
+      "purpose": "RDS Catálogo (Puerto 5432 exclusivo desde EC2 Catálogo)"
+    },
+    "mesatech-sg-rds-solicitudes": {
+      "id": "sg-00f4ba0465ecaf653",
+      "purpose": "RDS Solicitudes (Puerto 5432 exclusivo desde EC2 Solicitudes)"
+    }
+  }
+}

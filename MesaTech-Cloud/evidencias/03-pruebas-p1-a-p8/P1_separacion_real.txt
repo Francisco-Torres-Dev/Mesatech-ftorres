@@ -1,0 +1,61 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P1: SEPARACIÓN REAL DE EC2 Y RDS
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. IDENTIFICACIÓN DE INSTANCIAS EC2 DISTINTAS:
+--------------------------------------------------------------------------------
+• EC2 A (Catálogo y BFF):
+  - Instance ID: i-05a7867f9d3c7ebaf
+  - Nombre: MesaTech-EC2-A-Catalogo-BFF
+  - IP Privada: 172.31.5.17
+  - IP Pública: 3.239.211.61
+  - Sistema Operativo: Ubuntu 24.04 LTS
+  - Security Group: sg-03d8ffcf9973089f0 (mesatech-sg-catalogo)
+  - Procesos desplegados: ms-catalogo (puerto 8081), bff (puerto 8080)
+
+• EC2 B (Solicitudes y Consumidor):
+  - Instance ID: i-0264b18bc3f0955a3
+  - Nombre: MesaTech-EC2-B-Solicitudes
+  - IP Privada: 172.31.4.52
+  - IP Pública: 52.3.230.166
+  - Sistema Operativo: Ubuntu 24.04 LTS
+  - Security Group: sg-07fbba9ca5edd0afb (mesatech-sg-solicitudes)
+  - Proceso desplegado: ms-solicitudes (puerto 8082)
+
+• EC2 C (RabbitMQ Broker):
+  - Instance ID: i-0073a1baff203a9b4
+  - Nombre: MesaTech-EC2-C-RabbitMQ
+  - IP Privada: 172.31.13.15
+  - IP Pública: 100.53.54.131
+  - Sistema Operativo: Ubuntu 24.04 LTS
+  - Security Group: sg-0b13179b859054389 (mesatech-sg-rabbitmq)
+  - Proceso desplegado: RabbitMQ 3.13-management con Docker Compose (puertos 5672, 15672)
+
+2. IDENTIFICACIÓN DE INSTANCIAS RDS EXCLUSIVAS Y SEPARADAS:
+--------------------------------------------------------------------------------
+• Instancia RDS Catálogo:
+  - Identifier: mesatech-rds-catalogo
+  - Endpoint: mesatech-rds-catalogo.cqshchood3yx.us-east-1.rds.amazonaws.com
+  - Puerto: 5432
+  - Motor: PostgreSQL 16.9
+  - Base de datos: mesatech_catalogo
+  - Security Group: sg-05c509b1d00eaf639 (solo permite acceso desde sg-03d8ffcf9973089f0 / EC2 A)
+  - Tablas: categorias, prioridades
+
+• Instancia RDS Solicitudes:
+  - Identifier: mesatech-rds-solicitudes
+  - Endpoint: mesatech-rds-solicitudes.cqshchood3yx.us-east-1.rds.amazonaws.com
+  - Puerto: 5432
+  - Motor: PostgreSQL 16.9
+  - Base de datos: mesatech_solicitudes
+  - Security Group: sg-00f4ba0465ecaf653 (solo permite acceso desde sg-07fbba9ca5edd0afb / EC2 B)
+  - Tablas: solicitudes, categorias (copia sincronizada), prioridades, usuarios
+
+3. MATRIZ DE CONECTIVIDAD VERIFICADA:
+--------------------------------------------------------------------------------
+- EC2 A se conecta ÚNICAMENTE a RDS Catálogo (sin acceso cruzado a RDS Solicitudes).
+- EC2 B se conecta ÚNICAMENTE a RDS Solicitudes (sin acceso cruzado a RDS Catálogo).
+- Ambas EC2 se comunican con RabbitMQ por red privada (172.31.13.15:5672).
+================================================================================

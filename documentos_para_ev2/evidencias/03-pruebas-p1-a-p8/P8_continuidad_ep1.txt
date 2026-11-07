@@ -1,0 +1,108 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P8: CONTINUIDAD DE LA EVALUACIÓN PARCIAL 1
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. SEGURIDAD Y CONTROL DE ACCESO EN AWS API GATEWAY (HTTP API):
+--------------------------------------------------------------------------------
+API Endpoint: https://13fetz3wok.execute-api.us-east-1.amazonaws.com
+Prueba de consumo sin token de autenticación:
+curl -i https://13fetz3wok.execute-api.us-east-1.amazonaws.com/v1/catalogo
+
+Respuesta de API Gateway (JWT Authorizer):
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+www-authenticate: Bearer
+apigw-requestid: GDbzsg7joAMEZFA=
+{"message":"Unauthorized"}
+
+Resultado: Las solicitudes que no presentan un Bearer token JWT válido emitido por Microsoft Entra ID son rechazadas inmediatamente en el borde de AWS API Gateway antes de alcanzar el BFF ni los microservicios de negocio.
+
+2. SOPORTE DE CORS PREFLIGHT EN API GATEWAY:
+--------------------------------------------------------------------------------
+Comando OPTIONS:
+curl -i -X OPTIONS https://13fetz3wok.execute-api.us-east-1.amazonaws.com/v1/solicitudes \
+  -H "Origin: http://localhost:5173" \
+  -H "Access-Control-Request-Method: POST"
+
+Cabeceras de respuesta recibidas:
+access-control-allow-origin: *
+access-control-allow-methods: DELETE,GET,OPTIONS,PATCH,POST,PUT
+access-control-allow-headers: accept,authorization,content-type,origin
+access-control-max-age: 300
+
+Resultado: Los navegadores web que ejecuten la SPA en React pueden realizar invocaciones cross-origin mediante los headers autorizados.
+
+3. VALIDACIÓN DE REGLAS DE NEGOCIO DE ESTADOS DE SOLICITUD:
+--------------------------------------------------------------------------------
+Regla evaluada: "Como regla de negocio mínima, una solicitud no puede pasar a RESUELTA si antes no se encuentra EN_PROCESO."
+
+A. Intento de transición inválida (CREADA -> RESUELTA):
+Comando HTTP:
+PUT /v1/solicitudes/1/estado
+Payload: {"estado":"RESUELTA","observacion":"Intento directo sin procesar"}
+
+Respuesta recibida:
+HTTP 409 Conflict
+{
+  "error": "Conflict",
+  "message": "Transición de estado no permitida: una solicitud solo puede resolverse desde EN_PROCESO",
+  "status": 409,
+  "timestamp": "2026-10-30T10:39:04.937229773"
+}
+
+B. Flujo de transición válido paso a paso:
+• Transición 1: CREADA -> ASIGNADA
+  PUT /v1/solicitudes/1/estado -> {"estado":"ASIGNADA"}
+  Respuesta: HTTP 200 OK (estado: "ASIGNADA")
+
+• Transición 2: ASIGNADA -> EN_PROCESO
+  PUT /v1/solicitudes/1/estado -> {"estado":"EN_PROCESO"}
+  Respuesta: HTTP 200 OK (estado: "EN_PROCESO")
+
+• Transición 3: EN_PROCESO -> RESUELTA
+  PUT /v1/solicitudes/1/estado -> {"estado":"RESUELTA"}
+  Respuesta: HTTP 200 OK (estado: "RESUELTA")
+
+Resultado: El microservicio Solicitudes hace cumplir estrictamente el ciclo de vida de la atención técnica sin permitir saltos de estado que vulneren el proceso operativo.
+
+4. COEXISTENCIA DE VERSIONAMIENTO (V1 Y V2):
+--------------------------------------------------------------------------------
+A. Consulta Contrato V1:
+GET /v1/solicitudes/1
+Respuesta HTTP 200 OK:
+{
+  "id": 1,
+  "titulo": "No enciende equipo",
+  "descripcion": "El equipo de la oficina no prende luego de un corte eléctrico.",
+  "categoriaId": 1,
+  "categoriaNombre": "Hardware",
+  "prioridadId": 2,
+  "prioridadNombre": "MEDIA",
+  "usuarioSolicitante": "Cliente Demo",
+  "usuarioSolicitanteEmail": "cliente@mesatech.local",
+  "estado": "RESUELTA",
+  "fechaCreacion": "2026-10-30T10:21:36.706695"
+}
+
+B. Consulta Contrato V2 (Coexistente y enriquecido sin romper V1):
+GET /v2/solicitudes/1
+Respuesta HTTP 200 OK:
+{
+  "id": 1,
+  "titulo": "No enciende equipo",
+  "descripcion": "El equipo de la oficina no prende luego de un corte eléctrico. [v2: enriquecido con trazabilidad SLA y contrato extendido]",
+  "categoriaId": 1,
+  "categoriaNombre": "Hardware",
+  "prioridadId": 2,
+  "prioridadNombre": "MEDIA",
+  "usuarioSolicitante": "Cliente Demo",
+  "usuarioSolicitanteEmail": "cliente@mesatech.local",
+  "estado": "RESUELTA",
+  "fechaCreacion": "2026-10-30T10:21:36.706695"
+}
+
+CONCLUSIÓN P8:
+Se demuestra la total continuidad de los requerimientos de seguridad, CORS, ciclo de estados y coexistencia de APIs versionadas (/v1 y /v2) de la Evaluación Parcial 1 integrados en la arquitectura desacoplada de la Evaluación Parcial 2.
+================================================================================

@@ -1,0 +1,69 @@
+================================================================================
+EVIDENCIA OBLIGATORIA P7: FALLO CONTROLADO DE PUBLICACIÓN Y ANÁLISIS DE CONSISTENCIA
+MesaTech Cloud - Evaluación Parcial 2 (DSY1107)
+Fecha: 2026-10-30
+================================================================================
+
+1. DETENCIÓN TEMPORAL DEL BROKER RABBITMQ (EC2 C):
+--------------------------------------------------------------------------------
+Comando en EC2 C:
+cd ~/rabbitmq && sudo docker compose stop
+
+2. INTENTO DE CREACIÓN DE CATEGORÍA CON BROKER CAÍDO (EC2 A):
+--------------------------------------------------------------------------------
+Comando HTTP:
+POST http://localhost:8081/v1/catalogo/categorias
+Payload enviado:
+{
+  "nombre": "Monitoreo CloudWatch",
+  "descripcion": "Metricas y alarmas",
+  "activo": true
+}
+
+Respuesta controlada recibida:
+HTTP 503 SERVICE UNAVAILABLE
+{
+  "error": "Service Unavailable",
+  "message": "Categoría persistida en BD (ID: 7), pero ocurrió un error publicando el evento en RabbitMQ (broker no disponible).",
+  "status": 503,
+  "timestamp": "2026-10-30T10:36:06.418426251"
+}
+
+3. ESTADO REAL EN EL RDS DEL PUBLICADOR (CATÁLOGO):
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre, descripcion FROM categorias WHERE nombre = 'Monitoreo CloudWatch';
+Resultado:
+ id |        nombre        |    descripcion     
+----+----------------------+--------------------
+  7 | Monitoreo CloudWatch | Metricas y alarmas
+(1 row)
+
+4. ESTADO EN EL RDS DEL CONSUMIDOR (SOLICITUDES):
+--------------------------------------------------------------------------------
+Query: SELECT id, nombre FROM categorias WHERE nombre = 'Monitoreo CloudWatch';
+Resultado:
+ id | nombre 
+----+--------
+(0 rows)
+
+5. RESTABLECIMIENTO DEL BROKER (EC2 C):
+--------------------------------------------------------------------------------
+Comando en EC2 C:
+sudo docker compose start
+Estado del contenedor: Up (puertos 5672 y 15672 activos).
+
+6. REFLEXIÓN TÉCNICA OBLIGATORIA (RÚBRICA P7 / C6 / C9):
+--------------------------------------------------------------------------------
+• ¿Qué ocurrió?
+  La persistencia en base de datos relacional (RDS Catálogo) y la publicación de mensajería (RabbitMQ) son dos operaciones transaccionales independientes en sistemas distribuidos ("Dual-Write Problem").
+  La primera operación (escritura en RDS) tuvo éxito y confirmó la creación de la categoría con ID 7. Sin embargo, la segunda operación (envío del mensaje AMQP) falló de inmediato porque el broker RabbitMQ no estaba disponible en la red.
+
+• Respuesta del sistema:
+  El microservicio Catálogo capturó el fallo y entregó una respuesta de error controlada (HTTP 503 Service Unavailable), informando explícitamente al cliente que el registro fue guardado localmente pero que el evento asíncrono no pudo entregarse. No se engañó al usuario afirmando que todo se revirtió automáticamente.
+
+• Inconsistencia resultante:
+  El catálogo maestro tiene la categoría 7, pero Solicitudes no la tiene en su réplica local. Si el cliente intentara reenviar la solicitud idéntica, la base de datos de Catálogo rechazaría la inserción por unicidad de nombre (HTTP 409 Conflict), perpetuando la falta de sincronización si no existe un mecanismo de sincronización secundario.
+
+• Solución en arquitecturas avanzadas (fuera del alcance del MVP según pauta):
+  Para garantizar procesamiento sin inconsistencias sin transacciones distribuidas 2PC pesadas, se implementaría el patrón Transactional Outbox (guardar el evento en una tabla auxiliar dentro de la misma transacción SQL de la entidad y publicarlo con un proceso polling/CDC hacia RabbitMQ) junto con idempotencia en el consumidor y una cola de mensajes no entregados (Dead Letter Queue - DLQ).
+================================================================================

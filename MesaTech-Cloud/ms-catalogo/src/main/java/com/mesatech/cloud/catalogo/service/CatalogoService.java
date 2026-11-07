@@ -5,8 +5,11 @@ import com.mesatech.cloud.catalogo.dto.PrioridadDto;
 import com.mesatech.cloud.catalogo.entity.Categoria;
 import com.mesatech.cloud.catalogo.entity.Prioridad;
 import com.mesatech.cloud.catalogo.exception.ApiException;
+import com.mesatech.cloud.catalogo.publisher.RabbitPublisher;
 import com.mesatech.cloud.catalogo.repository.CategoriaRepository;
 import com.mesatech.cloud.catalogo.repository.PrioridadRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,12 +20,17 @@ import java.util.Objects;
 
 @Service
 public class CatalogoService {
+    private static final Logger log = LoggerFactory.getLogger(CatalogoService.class);
     private final CategoriaRepository categoriaRepository;
     private final PrioridadRepository prioridadRepository;
+    private final RabbitPublisher rabbitPublisher;
 
-    public CatalogoService(CategoriaRepository categoriaRepository, PrioridadRepository prioridadRepository) {
+    public CatalogoService(CategoriaRepository categoriaRepository, 
+                           PrioridadRepository prioridadRepository,
+                           RabbitPublisher rabbitPublisher) {
         this.categoriaRepository = categoriaRepository;
         this.prioridadRepository = prioridadRepository;
+        this.rabbitPublisher = rabbitPublisher;
     }
 
     public List<Object> getCatalogo() {
@@ -36,7 +44,6 @@ public class CatalogoService {
         return categoriaRepository.findByActivoTrue().stream().map(this::toCategoriaDto).toList();
     }
 
-    @Transactional
     public CategoriaDto crearCategoria(CategoriaDto dto) {
         if (categoriaRepository.findByNombre(dto.getNombre().trim()).isPresent()) {
             throw new ApiException(HttpStatus.CONFLICT, "La categoría ya existe");
@@ -45,7 +52,20 @@ public class CatalogoService {
         categoria.setNombre(dto.getNombre().trim());
         categoria.setDescripcion(dto.getDescripcion());
         categoria.setActivo(Boolean.TRUE.equals(dto.getActivo()));
-        return toCategoriaDto(categoriaRepository.save(categoria));
+        
+        // 1. Guardar en RDS Catálogo
+        Categoria guardada = categoriaRepository.save(categoria);
+        log.info("[CATALOGO] Categoría persistida en RDS con ID: {}", guardada.getId());
+
+        // 2. Publicar evento en RabbitMQ (operación separada)
+        boolean publicado = rabbitPublisher.publishCategoriaCreada(guardada.getId(), guardada.getNombre());
+        if (!publicado) {
+            log.error("[CATALOGO ADVERTENCIA] El registro quedó guardado en RDS Catálogo (ID: {}), pero falló la publicación en el broker RabbitMQ.", guardada.getId());
+            throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, 
+                "Categoría persistida en BD (ID: " + guardada.getId() + "), pero ocurrió un error publicando el evento en RabbitMQ (broker no disponible).");
+        }
+
+        return toCategoriaDto(guardada);
     }
 
     @Transactional
@@ -110,21 +130,21 @@ public class CatalogoService {
         prioridadRepository.delete(prioridad);
     }
 
-    private CategoriaDto toCategoriaDto(Categoria categoria) {
+    private CategoriaDto toCategoriaDto(Categoria entity) {
         CategoriaDto dto = new CategoriaDto();
-        dto.setId(categoria.getId());
-        dto.setNombre(categoria.getNombre());
-        dto.setDescripcion(categoria.getDescripcion());
-        dto.setActivo(categoria.isActivo());
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        dto.setDescripcion(entity.getDescripcion());
+        dto.setActivo(entity.isActivo());
         return dto;
     }
 
-    private PrioridadDto toPrioridadDto(Prioridad prioridad) {
+    private PrioridadDto toPrioridadDto(Prioridad entity) {
         PrioridadDto dto = new PrioridadDto();
-        dto.setId(prioridad.getId());
-        dto.setNombre(prioridad.getNombre());
-        dto.setNivel(prioridad.getNivel());
-        dto.setActivo(prioridad.isActivo());
+        dto.setId(entity.getId());
+        dto.setNombre(entity.getNombre());
+        dto.setNivel(entity.getNivel());
+        dto.setActivo(entity.isActivo());
         return dto;
     }
 }
