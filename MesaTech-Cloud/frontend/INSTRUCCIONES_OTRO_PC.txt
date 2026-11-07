@@ -12,10 +12,11 @@ REQUISITOS PREVIOS EN EL OTRO COMPUTADOR:
 1. Tener instalado Node.js (versión 18, 20 o superior).
    Descargar desde: https://nodejs.org/
 
-2. Las instancias en AWS deben estar ENCENDIDAS (Running) en AWS Academy:
-   - MesaTech-EC2-A-Catalogo-BFF
-   - MesaTech-EC2-B-Solicitudes
-   - MesaTech-EC2-C-RabbitMQ
+2. Las instancias en AWS cuentan con IPs Elásticas (Elastic IPs) FIJAS y permanentes:
+   - MesaTech-EC2-A-Catalogo-BFF: 18.233.216.8 (Privada: 172.31.5.17)
+   - MesaTech-EC2-B-Solicitudes:  98.82.97.78  (Privada: 172.31.4.52)
+   - MesaTech-EC2-C-RabbitMQ:     34.236.12.11 (Privada: 172.31.13.15)
+   - Panel Web RabbitMQ fijo:     http://34.236.12.11:15672 (admin_mesatech / admin_password_123)
 
 --------------------------------------------------------------------------------
 PASOS PARA EJECUTAR:
